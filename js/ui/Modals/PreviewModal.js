@@ -2,9 +2,12 @@
  * Класс PreviewModal
  * Используется как обозреватель загруженный файлов в облако
  */
-class PreviewModal {
-  constructor( element ) {
-
+class PreviewModal extends BaseModal{
+  constructor(element) {
+    super(element);
+    this.btnClose = document.getElementsByClassName("ui close button")[1];
+    this.content = document.querySelectorAll(".scrolling.content")[1];
+    this.registerEvents();
   }
 
   /**
@@ -15,15 +18,55 @@ class PreviewModal {
    * Скачивает изображение, если клик был на кнопке download
    */
   registerEvents() {
+    // Закрытие модального окна по клику на крестик
+    this.element[0].addEventListener("click", (e) => {
+      if (e.target.className == "x icon") {
+        super.close();
+        this.content.innerHTML = "";
+      };
+    });
 
-  }
+    // Управление изображением:
+    this.content.addEventListener("click", (e) => {
+      let callback = (response) => {
+        console.log(response.target.status);
+        e.target.closest(".image-preview-container").remove();
+      };
+
+      // 1) удаление
+      if (e.target.className == "ui labeled icon red basic button delete") {
+        let path = e.target.getAttribute("data-path").replace("disc:/", "").replace("/", "%2F");
+      
+       
+        Yandex.removeFile(path, callback);
+        // Если снять комментарии с клика по иконкам, перестает работать как нужно...
+      // } else if (e.target.className = "trash icon") {
+      //   let path = e.target.closest(".delete").getAttribute("data-path").replace("disc:/", "").replace("/", "%2F");
+        
+      //   Yandex.removeFile(path, callback);
+      
+      // 2) скачивание
+      } else if (e.target.className == "ui labeled icon violet basic button download") {
+        let url = e.target.getAttribute("data-file");
+        
+
+        Yandex.downloadFileByUrl(url);
+
+      // } else if (e.target.className = "download icon") {
+      //   let url = e.target.closest(".download").getAttribute("data-file");
+        
+      //   Yandex.downloadFileByUrl(url);
+      };
+    });
+
+  };
 
 
   /**
    * Отрисовывает изображения в блоке всплывающего окна
    */
   showImages(data) {
-
+    this.content.innerHTML += data;
   }
 
   /**
@@ -31,13 +74,46 @@ class PreviewModal {
    * в формат «30 декабря 2021 г. в 23:40» (учитывая временной пояс)
    * */
   formatDate(date) {
-
-  }
+    let oldDate = new Date (date);
+    var options = {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+      timezone: 'UTC',
+      hour: 'numeric',
+      minute: 'numeric',
+    };
+    return oldDate.toLocaleString("ru", options);
+  };
 
   /**
    * Возвращает разметку из изображения, таблицы с описанием данных изображения и кнопок контроллеров (удаления и скачивания)
    */
   getImageInfo(item) {
+    let markup = `
+      <div class="image-preview-container">
+        <img src=${item.src} />
+        <table class="ui celled table">
+          <thead>
+            <tr><th>Имя</th><th>Создано</th><th>Размер</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>${item.name}</td><td>${item.date}</td><td>${item.size}Кб</td></tr>
+          </tbody>
+        </table>
+        <div class="buttons-wrapper">
+          <button class="ui labeled icon red basic button delete" data-path=${item.path}>
+            Удалить
+            <i class="trash icon"></i>
+          </button>
+          <button class="ui labeled icon violet basic button download" data-file=${item.url}>
+            Скачать
+            <i class="download icon"></i>
+          </button>
+        </div>
+      </div>
+    `;
 
-  }
-}
+    return markup;
+  };
+};

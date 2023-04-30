@@ -159,3 +159,22 @@ i.icon.asterisk.loading {
 .uploaded-previewer-modal .image-preview-container .ui.labeled.icon.button > .icon {
   background: none;
 }
+
+/* Добавил */
+.x.icon:hover {
+  color: #9a9b9c;
+  cursor: pointer;
+}
+
+.x.icon.img {
+  display: block;
+  position: relative;
+  top: 30px;
+  right: -110px;
+  height: 23px;
+  width: 23px;
+  padding: 0;
+  border: solid 2px white;
+  border-radius: 11px;
+  
+}
