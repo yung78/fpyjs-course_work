@@ -125,23 +125,14 @@ class FileUploaderModal extends BaseModal {
     let yaPath = "";
     
     // Проверка создания папки и заполнения поля ввода:
-    // 1)если поле ввода input ПУСТОЕ и имя папки НЕ задано добавляем класс error блоку с классом input
-    if ((!Yandex.folderName.trim()) && (!path.trim())) {
+    // 1)если поле ввода input ПУСТОЕ, добавляем класс error блоку с классом input
+    if (!path.trim()) {
       imageContainer.img.nextElementSibling.className += " error";
       return;
-      // 2)если в поле ввода input заданы имя папки и имя файла(input в приоритете)
+      // 2)если в поле ввода input заданы имя папки и имя файла
     } else if (path.includes("/")) {
       yaPath = path.replaceAll("/", "%2F").trim();
-      // 3)если в поле ввода (оставил на свое усмотрение) задано имя файла(можно поменять на имя папки)
-      // и имя папки задано в всплывающем окне prompt
-    } else if ((path.trim()) && (Yandex.folderName.trim())) {
-      yaPath = `${Yandex.folderName.trim()}%2F${path.trim()}`;
-      // 4)если в поле ввода (оставил на свое усмотрение) НЕ задано имя файла(можно поменять на имя папки)
-      // и имя папки задано в всплывающем окне prompt
-    } else if ((!path.trim()) && (Yandex.folderName.trim())) {
-      yaPath = `${Yandex.folderName.trim()}%2F${imageContainer.id}`;
-      // 5)если в поле ввода (оставил на свое усмотрение) задано имя файла(можно поменять на имя папки)
-      // и имя папки НЕ задано в всплывающем окне prompt (сохраняем в корень)
+      // 3)если в поле ввода input задано только имя файла сохраняем в корень
     } else {
       yaPath = `%2F${path.trim()}`;
     };

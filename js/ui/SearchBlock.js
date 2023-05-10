@@ -21,32 +21,27 @@ class SearchBlock {
     btnAdd.addEventListener("click", () => {
       let id = input.value.trim();
       if (id) {
-        VK.get(input.value.trim(), (result) => data = result);
-
-        setTimeout(() => {        // не разобрался как на промисах сделать методы с аргументами и колбеками, сделал с таймаутом 
-          for (let el of data) {  // буду рад подсказке или примерному наброску скелета в комментариях при отправке на доработку)))
-
+        VK.get(input.value.trim(), (result) => {
+          for ( let el of result ) {
             App.imageViewer.drawImages(el);
           };
 
           App.imageViewer.checkButtonText()
-        }, 250);
+        });
       } else {return alert("Поле ввода не заполнено")};
     });
 
     btnReplace.addEventListener("click", () => {
       if (input.value.trim()) {
-        VK.get(input.value.trim(), (result) => data = result);
-        
-        setTimeout(() => {      // то же самое)
+        VK.get(input.value.trim(), (result) => {
           App.imageViewer.clear();
           
-          for (let el of data) {
+          for ( let el of result ) {
             App.imageViewer.drawImages(el);
           };
 
           App.imageViewer.checkButtonText()
-        }, 250);
+        });
       } else {return alert("Поле ввода не заполнено")};
     });
   };

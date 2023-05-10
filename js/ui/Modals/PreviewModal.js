@@ -19,7 +19,7 @@ class PreviewModal extends BaseModal{
    */
   registerEvents() {
     // Закрытие модального окна по клику на крестик
-    this.element[0].addEventListener("click", (e) => {
+    document.querySelector(".uploaded-previewer-modal").addEventListener("click", (e) => {
       if (e.target.className == "x icon") {
         super.close();
         this.content.innerHTML = "";
@@ -34,31 +34,18 @@ class PreviewModal extends BaseModal{
       };
 
       // 1) удаление
-      if (e.target.className == "ui labeled icon red basic button delete") {
-        let path = e.target.getAttribute("data-path").replace("disc:/", "").replace("/", "%2F");
+      if ((e.target.className == "ui labeled icon red basic button delete") || (e.target.className == "trash icon")) {
+        let path = e.target.closest("button").getAttribute("data-path").replace("disc:/", "").replace("/", "%2F");
       
-       
         Yandex.removeFile(path, callback);
-        // Если снять комментарии с клика по иконкам, перестает работать как нужно...
-      // } else if (e.target.className = "trash icon") {
-      //   let path = e.target.closest(".delete").getAttribute("data-path").replace("disc:/", "").replace("/", "%2F");
-        
-      //   Yandex.removeFile(path, callback);
-      
+
       // 2) скачивание
-      } else if (e.target.className == "ui labeled icon violet basic button download") {
-        let url = e.target.getAttribute("data-file");
-        
+      } else if ((e.target.className == "ui labeled icon violet basic button download") || (e.target.className == "download icon")) {
+        let url = e.target.closest("button").getAttribute("data-file");
 
         Yandex.downloadFileByUrl(url);
-
-      // } else if (e.target.className = "download icon") {
-      //   let url = e.target.closest(".download").getAttribute("data-file");
-        
-      //   Yandex.downloadFileByUrl(url);
       };
     });
-
   };
 
 
@@ -66,8 +53,22 @@ class PreviewModal extends BaseModal{
    * Отрисовывает изображения в блоке всплывающего окна
    */
   showImages(data) {
-    this.content.innerHTML += data;
-  }
+    for (let el of data) {
+      if (el.media_type == "image") {
+        let changeDate = this.formatDate(el.created);
+        console.log(el)
+        this.content.innerHTML += this.getImageInfo({
+          src: el.preview,
+          name: el.name,
+          date: changeDate,
+          size: el.size,
+          path: el.path,
+          url: el.file
+        });
+      };
+    };
+  };
+
 
   /**
    * Форматирует дату в формате 2021-12-30T20:40:02+00:00(строка)

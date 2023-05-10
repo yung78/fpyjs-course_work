@@ -68,30 +68,17 @@ class ImageViewer {
       let data;
 
       let callback = (response) => {
+        console.log(response)
         console.log(response.target.status);
-        data = response.currentTarget.response._embedded.items.reverse()
-        console.log(data)
+        data = response.currentTarget.response.items.reverse();
+        previwer.showImages(data);
+
+        previwer.content.firstElementChild.remove();
       };
       
       // Получаем информацию по всем файлам папки Yandex.folderName
       Yandex.getUploadedFiles(callback);
       previwer.open();
-      
-      setTimeout(() => {      // ииии... здесь то же самое)
-        for (let el of data) {
-          let changeDate = previwer.formatDate(el.created);
-
-          previwer.showImages(previwer.getImageInfo({
-            src: el.preview,
-            name: el.name,
-            date: changeDate,
-            size: el.size,
-            path: el.path,
-            url: el.file
-          }));
-        };
-        document.querySelectorAll(".scrolling.content")[1].firstElementChild.remove();
-      }, 1000);
     });
 
     //Клик по кнопке "Отправить на диск"
@@ -109,12 +96,6 @@ class ImageViewer {
 
       // Запрос токена(запись в localStorage)
       Yandex.getToken(); 
-
-      // Запрос папки, куда будут сохранены фотографии(пустое поле - папка не создается)
-      if (!Yandex.folderName.trim()) {
-        Yandex.folderName = prompt("Введите название папки(латинские буквы или цифры)");
-        Yandex.createFolder();
-      };
     });
   };
 

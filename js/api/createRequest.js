@@ -7,18 +7,12 @@ const createRequest = (options = {}) => {
     xhr.responseType = 'json';
     xhr.open(options.method, options.url);
     xhr.setRequestHeader("Authorization", `OAuth ${Yandex.Token}`);
-    xhr.onload = options.callback;
-    xhr.send();
 
-    // Конструкция ниже ошибки response не ловит
-
-    // пробовал при статусе >205 new Error -  тоже не работает
-    // try {
-    //     xhr.open(options.method, options.url);
-    //     xhr.setRequestHeader("Authorization", `OAuth ${Yandex.token}`);
-    //     xhr.send();
-    // } catch(err) {
-    //     alert(err.name);
-    //     alert(err.massage);
-    // }
+    try {
+        xhr.onload = options.callback; 
+        xhr.send();
+    } catch(err) {
+        alert(err.name);
+        alert(err.massage);
+    };
 };

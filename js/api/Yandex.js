@@ -11,34 +11,10 @@ class Yandex {
    * Метод формирования и сохранения токена для Yandex API
    */
   static getToken(){
-    let loadItem = localStorage.getItem("YaToken") || 0;
-    if (loadItem) {
-      Yandex.Token = loadItem;
-    } else {
+    Yandex.Token = localStorage.getItem("YaToken");
+    if (!Yandex.Token) {
       Yandex.Token = prompt("Введите токен Yandex");
       localStorage.setItem("YaToken", Yandex.Token);
-    };
-  };
-
-  /**
-   * Метод создания папки (добавил)
-   */
-  static createFolder() {
-    if (Yandex.folderName.trim()) {
-      createRequest({
-        method: "PUT",
-        url: `${Yandex.HOST}/resources?path=${Yandex.folderName}`, // path=jsCloudSaver
-        callback: (response) => { // если добавить аргумент err перед response - он туда ответ запаковывает, а response = undefined
-          console.log(response.target.status);
-          if ((response.target.status > 207) && (response.target.status != 409)) {
-            alert(response.target.response.message);
-          }  else if (response.target.status == 409) {
-            alert(`Папка найдена, все изображения будут сохранены в ${Yandex.folderName}`);
-          } else {
-            alert(`Папка ${Yandex.folderName} создана`);
-          };
-        }
-      });
     };
   };
 
@@ -69,17 +45,10 @@ class Yandex {
    */
   static getUploadedFiles(callback) { 
     Yandex.getToken()
-    let path  // можно сделать запрос папки(пути) при использовании просмотра без загрузки на диск
-
-    if (Yandex.folderName){
-      path = Yandex.folderName;
-    } else {
-      path = "/"  // Без заданной папки грузит из корня
-    };
 
     createRequest({
       method: "GET",
-      url: `${Yandex.HOST}/resources?path=${path}`,
+      url: `${Yandex.HOST}/resources/files`,
       callback: callback
     })
   };
